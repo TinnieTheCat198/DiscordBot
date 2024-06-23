@@ -3,7 +3,13 @@ import sqlite3
 def create_subscribed_users_storage():
     conn = sqlite3.connect("subscribed_users.db")
     cursor = conn.cursor()
-    cursor.execute("CREATE TABLE users(id INTEGER)")
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
+    result = cursor.fetchone()
+    if result:
+        print("TABLE users already created")
+    else:
+        print("Create table")
+        cursor.execute("CREATE TABLE users(id INTEGER)")
     conn.close()
 
 def add_subscribed_user(user_id):
@@ -44,6 +50,4 @@ def getSubscribedUserIDS():
     ids = res.fetchall()
     conn.close()
     return ids
-
-print(check_subscription(11))
     

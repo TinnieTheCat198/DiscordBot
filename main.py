@@ -1,4 +1,5 @@
 import discord
+import keys
 from discord.ext import commands, tasks
 import extract_doc
 import database
@@ -40,9 +41,8 @@ async def slash_command(interaction:discord.Interaction):
 @client.tree.command(name="subscribe", description="Subscribe to new class notifications")
 async def slash_command(interaction:discord.Interaction):
     user_id = interaction.user.id
-    subscribed_users = database.getSubscribedUserIDS()
-    if (user_id,) not in subscribed_users:
-        subscribed_users.add(user_id)
+    if database.check_subscription(user_id) == False:
+        database.add_subscribed_user(user_id)
         await interaction.response.send_message("You have successfully subscribed to the new class notification. You will be notified when there are updates.")
     else:
         await interaction.response.send_message("You are already subscribed to the new class notification.")
@@ -50,11 +50,10 @@ async def slash_command(interaction:discord.Interaction):
 @client.tree.command(name="unsubscribe", description="Stop receiving new class notifications")
 async def slash_command(interaction:discord.Interaction):
     user_id = interaction.user.id
-    subscribed_users = database.getSubscribedUserIDS()
-    if (user_id,) not in subscribed_users:
+    if database.check_subscription(user_id) == False:
         await interaction.response.send_message("You have not subscribed yet!")
     else:
         database.remove_subscribed_user(user_id)
         await interaction.response.send_message("Unsubscribed successfully.")
 
-client.run('MTI0NjY2NTc0ODI2NTQzOTMyNA.G9JQ6t.ihOjht1Ym-pXsRCYGJ7sSqFYCH2XZexRywVlFc')
+client.run(keys.BOT_KEY)
